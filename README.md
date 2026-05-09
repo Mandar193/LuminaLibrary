@@ -1,20 +1,31 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Lumina Library
 
-# Run and deploy your AI Studio app
+A sophisticated Management System Admin Portal for library personnel, featuring book inventory, staff management, and detailed analytics.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/9507b669-25dd-4bab-aded-8833c4a54489
+- **Inventory Management**: Track books, availability, and categories.
+- **Personnel Dashboard**: Manage staff members and their roles.
+- **Analytics**: Overview of total books, active staff, and system health.
+- **Security**: Hardened Firestore rules with Multi-Admin support.
+- **Fluid UI**: Responsive design with Tailwind CSS and Motion animations.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+- **Frontend**: React 19, TypeScript, Vite
+- **Styling**: Tailwind CSS
+- **Database/Auth**: Firebase Firestore & Authentication
+- **Icons**: Lucide React
+- **Animations**: Motion
 
+## Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Clone the repository.
+2. Install dependencies: `npm install`
+3. Set up your Firebase project and add the configuration in the code.
+4. Run the development server: `npm run dev`
+5. Build for production: `npm run build`
+
+## License
+
+MIT

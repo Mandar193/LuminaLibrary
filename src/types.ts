@@ -9,6 +9,7 @@ export interface User {
   name: string;
   role: string;
   avatar: string;
+  isAdmin: boolean;
 }
 
 export interface Book {

@@ -17,13 +17,15 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const refreshUser = () => {
+  const refreshUser = async () => {
     const user = auth.currentUser;
     if (user) {
+      const isAdmin = user.email === "mandaras936@gmail.com" || await firebaseService.isUserAdmin(user.uid);
       setCurrentUser({
         name: user.displayName || user.email?.split('@')[0] || 'User',
-        role: 'Administrator',
-        avatar: user.photoURL || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDQ6HzowJ9ABIH7VKRje6t_e-jkHaoxVjtgAObjIwZ32MPzA5cgL0tQZ-HIWozMok-HeHwtMS2E5nw1zbWvQZX_Vd-eQdx2RpwwRj6ka2DINLBU1OuPyAmHuqh3_Nre_VG-dT7i-B9PAw8VR_72tMSOXPkYOeuDmfhi5LZB2-gHHHq41_NeY2a-UutP4ecij7lErpEJ2qx9mdE-3dS2Q046RTNEOYo8fLEcCBfW9QxxhcEGOL4KcDfWuz7W5O2UE6IemWlTwhacO55A'
+        role: isAdmin ? 'Administrator' : 'Staff Member',
+        avatar: user.photoURL || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDQ6HzowJ9ABIH7VKRje6t_e-jkHaoxVjtgAObjIwZ32MPzA5cgL0tQZ-HIWozMok-HeHwtMS2E5nw1zbWvQZX_Vd-eQdx2RpwwRj6ka2DINLBU1OuPyAmHuqh3_Nre_VG-dT7i-B9PAw8VR_72tMSOXPkYOeuDmfhi5LZB2-gHHHq41_NeY2a-UutP4ecij7lErpEJ2qx9mdE-3dS2Q046RTNEOYo8fLEcCBfW9QxxhcEGOL4KcDfWuz7W5O2UE6IemWlTwhacO55A',
+        isAdmin
       });
     }
   };
@@ -35,10 +37,12 @@ export default function App() {
         await firebaseService.seedInitialData();
         await firebaseService.checkAndBootstrapAdmin();
         
+        const isAdmin = user.email === "mandaras936@gmail.com" || await firebaseService.isUserAdmin(user.uid);
         setCurrentUser({
           name: user.displayName || user.email?.split('@')[0] || 'User',
-          role: 'Administrator',
-          avatar: user.photoURL || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDQ6HzowJ9ABIH7VKRje6t_e-jkHaoxVjtgAObjIwZ32MPzA5cgL0tQZ-HIWozMok-HeHwtMS2E5nw1zbWvQZX_Vd-eQdx2RpwwRj6ka2DINLBU1OuPyAmHuqh3_Nre_VG-dT7i-B9PAw8VR_72tMSOXPkYOeuDmfhi5LZB2-gHHHq41_NeY2a-UutP4ecij7lErpEJ2qx9mdE-3dS2Q046RTNEOYo8fLEcCBfW9QxxhcEGOL4KcDfWuz7W5O2UE6IemWlTwhacO55A'
+          role: isAdmin ? 'Administrator' : 'Staff Member',
+          avatar: user.photoURL || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDQ6HzowJ9ABIH7VKRje6t_e-jkHaoxVjtgAObjIwZ32MPzA5cgL0tQZ-HIWozMok-HeHwtMS2E5nw1zbWvQZX_Vd-eQdx2RpwwRj6ka2DINLBU1OuPyAmHuqh3_Nre_VG-dT7i-B9PAw8VR_72tMSOXPkYOeuDmfhi5LZB2-gHHHq41_NeY2a-UutP4ecij7lErpEJ2qx9mdE-3dS2Q046RTNEOYo8fLEcCBfW9QxxhcEGOL4KcDfWuz7W5O2UE6IemWlTwhacO55A',
+          isAdmin
         });
       } else {
         setCurrentUser(null);
@@ -77,9 +81,9 @@ export default function App() {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentPage} />;
       case 'inventory':
-        return <Inventory isAdding={isAddModalOpen} onAdded={() => setIsAddModalOpen(false)} />;
+        return <Inventory user={currentUser} isAdding={isAddModalOpen} onAdded={() => setIsAddModalOpen(false)} />;
       case 'staff':
-        return <Staff isAdding={isAddModalOpen} onAdded={() => setIsAddModalOpen(false)} />;
+        return <Staff user={currentUser} isAdding={isAddModalOpen} onAdded={() => setIsAddModalOpen(false)} />;
       case 'settings':
         return <Settings onUserUpdate={refreshUser} />;
       default:

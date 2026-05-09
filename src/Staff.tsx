@@ -4,15 +4,16 @@ import {
   X,
   Trash2
 } from 'lucide-react';
-import { StaffMember } from './types';
+import { StaffMember, User } from './types';
 import { firebaseService } from './firebaseService';
 
 interface StaffProps {
+  user: User;
   isAdding?: boolean;
   onAdded?: () => void;
 }
 
-export default function Staff({ isAdding, onAdded }: StaffProps) {
+export default function Staff({ user, isAdding, onAdded }: StaffProps) {
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newMember, setNewMember] = useState<Omit<StaffMember, 'id'>>({
@@ -74,7 +75,7 @@ export default function Staff({ isAdding, onAdded }: StaffProps) {
   return (
     <div className="space-y-6">
       {/* Add Staff Modal */}
-      {isAdding && (
+      {isAdding && user.isAdmin && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -130,7 +131,7 @@ export default function Staff({ isAdding, onAdded }: StaffProps) {
         {[
           { label: 'Total Personnel', value: staff.length.toString(), change: 'Registered', color: 'indigo-500' },
           { label: 'Verified Accounts', value: staff.length.toString(), change: '100% coverage', color: 'emerald-500' },
-          { label: 'Pending Access', value: '0', change: 'Clean slate', color: 'amber-500' },
+          { label: 'System Access', value: user.isAdmin ? 'Full Admin' : 'Read Only', change: 'Security Level', color: 'amber-500' },
         ].map((s, i) => (
           <div key={i} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">{s.label}</p>
@@ -179,7 +180,9 @@ export default function Staff({ isAdding, onAdded }: StaffProps) {
                       <td className="px-6 py-4 text-[13px] text-slate-500 font-medium">{s.dateJoined}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-1">
-                          {confirmDeleteId === s.id ? (
+                          {!user.isAdmin ? (
+                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">View Only</span>
+                          ) : confirmDeleteId === s.id ? (
                             <div className="flex items-center gap-1">
                               <button 
                                 onClick={() => handleDelete(s.id, s.name)}
@@ -236,8 +239,9 @@ export default function Staff({ isAdding, onAdded }: StaffProps) {
           </div>
 
         {/* Quick Add Form Section */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        {user.isAdmin && (
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
             <h3 className="font-semibold text-slate-800 text-sm mb-4">Quick Add Employee</h3>
             <form onSubmit={handleAddStaff} className="space-y-4">
               <div className="space-y-1">
@@ -294,7 +298,8 @@ export default function Staff({ isAdding, onAdded }: StaffProps) {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
+  </div>
   );
 }

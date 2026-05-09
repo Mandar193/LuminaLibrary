@@ -8,15 +8,16 @@ import {
   X,
   Trash2
 } from 'lucide-react';
-import { Book as BookType } from './types';
+import { Book as BookType, User } from './types';
 import { firebaseService } from './firebaseService';
 
 interface InventoryProps {
+  user: User;
   isAdding?: boolean;
   onAdded?: () => void;
 }
 
-export default function Inventory({ isAdding, onAdded }: InventoryProps) {
+export default function Inventory({ user, isAdding, onAdded }: InventoryProps) {
   const [books, setBooks] = useState<BookType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newBook, setNewBook] = useState<Omit<BookType, 'id'>>({
@@ -76,6 +77,8 @@ export default function Inventory({ isAdding, onAdded }: InventoryProps) {
     { label: 'Missing Items', value: books.filter(b => b.status === 'Missing').length.toString(), sub: 'Requires audit', color: 'amber-500' },
     { label: 'Estimated Value', value: `$${(books.length * 45).toLocaleString()}`, sub: 'Market estimate', color: 'indigo-600' },
   ];
+
+  const canDelete = user.isAdmin;
 
   if (isLoading) {
     return (
@@ -254,12 +257,14 @@ export default function Inventory({ isAdding, onAdded }: InventoryProps) {
                           <button className="p-1.5 text-slate-300 hover:text-slate-600 transition-colors">
                             <MoreVertical size={16} />
                           </button>
-                          <button 
-                            onClick={() => setConfirmDeleteId(b.id)}
-                            className="p-1.5 text-slate-300 hover:text-rose-600 transition-colors"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          {canDelete && (
+                            <button 
+                              onClick={() => setConfirmDeleteId(b.id)}
+                              className="p-1.5 text-slate-300 hover:text-rose-600 transition-colors"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
                         </>
                       )}
                     </div>

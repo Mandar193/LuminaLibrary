@@ -39,7 +39,7 @@ export default function Layout({
   ];
 
   const filteredMenuItems = menuItems.filter(item => 
-    !item.adminOnly || user.role?.toLowerCase() === 'administrator' || user.email === "mandaras936@gmail.com"
+    !item.adminOnly || user.isAdmin
   );
 
   return (
@@ -92,7 +92,7 @@ export default function Layout({
               </div>
               <div className="flex-1 overflow-hidden">
                 <p className="text-white text-xs font-bold truncate">{user.name}</p>
-                <p className="text-[10px] text-slate-500 font-bold truncate uppercase tracking-tighter mt-0.5">Administrator</p>
+                <p className="text-[10px] text-slate-500 font-bold truncate uppercase tracking-tighter mt-0.5">{user.role}</p>
               </div>
               <button 
                 onClick={onLogout}
@@ -135,13 +135,15 @@ export default function Layout({
               </button>
             </div>
             
-            <button 
-              onClick={onAdd}
-              className="px-4 py-2 bg-indigo-600 text-white text-[11px] font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200 uppercase tracking-widest flex items-center gap-2"
-            >
-              <Plus size={14} />
-              Add Record
-            </button>
+            {((currentPage === 'inventory') || (currentPage === 'staff' && user.isAdmin)) && (
+              <button 
+                onClick={onAdd}
+                className="px-4 py-2 bg-indigo-600 text-white text-[11px] font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200 uppercase tracking-widest flex items-center gap-2"
+              >
+                <Plus size={14} />
+                Add Record
+              </button>
+            )}
           </div>
         </header>
 

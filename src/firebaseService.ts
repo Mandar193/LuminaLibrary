@@ -146,7 +146,7 @@ export const firebaseService = {
 
   checkAndBootstrapAdmin: async () => {
     const user = auth.currentUser;
-    if (user && user.email === "mandaras936@gmail.com") {
+    if (user && user.email === "ssnhtr1980@gmail.com") {
       try {
         const adminRef = doc(db, 'admins', user.uid);
         const adminSnap = await getDoc(adminRef);

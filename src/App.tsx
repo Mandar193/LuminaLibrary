@@ -20,7 +20,7 @@ export default function App() {
   const refreshUser = async () => {
     const user = auth.currentUser;
     if (user) {
-      const isAdmin = user.email === "mandaras936@gmail.com" || await firebaseService.isUserAdmin(user.uid);
+      const isAdmin = user.email === "ssnhtr1980@gmail.com" || await firebaseService.isUserAdmin(user.uid);
       setCurrentUser({
         name: user.displayName || user.email?.split('@')[0] || 'User',
         role: isAdmin ? 'Administrator' : 'Staff Member',
@@ -37,7 +37,7 @@ export default function App() {
         await firebaseService.seedInitialData();
         await firebaseService.checkAndBootstrapAdmin();
         
-        const isAdmin = user.email === "mandaras936@gmail.com" || await firebaseService.isUserAdmin(user.uid);
+        const isAdmin = user.email === "ssnhtr1980@gmail.com" || await firebaseService.isUserAdmin(user.uid);
         setCurrentUser({
           name: user.displayName || user.email?.split('@')[0] || 'User',
           role: isAdmin ? 'Administrator' : 'Staff Member',

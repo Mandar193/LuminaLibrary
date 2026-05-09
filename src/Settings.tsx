@@ -50,7 +50,7 @@ export default function Settings({ onUserUpdate }: SettingsProps) {
 
     const checkAdminStatus = async () => {
       // Bootstrap admin check
-      if (user.email === "mandaras936@gmail.com") {
+      if (user.email === "ssnhtr1980@gmail.com") {
         setIsAdmin(true);
         return;
       }
@@ -90,7 +90,7 @@ export default function Settings({ onUserUpdate }: SettingsProps) {
   };
 
   const handleRemoveAdmin = async (uid: string, email: string) => {
-    if (uid === user?.uid && email === "mandaras936@gmail.com") {
+    if (uid === user?.uid && email === "ssnhtr1980@gmail.com") {
       alert("Cannot remove the primary bootstrap administrator.");
       return;
     }

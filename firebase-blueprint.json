@@ -1,0 +1,91 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Internal staff or admin profile data.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "avatar": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email"]
+    },
+    "Book": {
+      "title": "Library Book",
+      "description": "A single volume in the library collection.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "isbn": { "type": "string" },
+        "status": { "type": "string", "enum": ["Available", "Loaned", "Missing"] },
+        "category": { "type": "string" },
+        "year": { "type": "integer" },
+        "cover": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "author", "isbn", "status"]
+    },
+    "Staff": {
+      "title": "Staff Personnel",
+      "description": "Information about employees and their roles.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "dateJoined": { "type": "string", "format": "date" },
+        "initials": { "type": "string" }
+      },
+      "required": ["name", "email", "role"]
+    },
+    "Activity": {
+      "title": "System Activity",
+      "description": "A log of actions performed by users.",
+      "type": "object",
+      "properties": {
+        "user": { "type": "string" },
+        "action": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "color": { "type": "string" }
+      },
+      "required": ["user", "action", "timestamp"]
+    },
+    "Admin": {
+      "title": "Administrator",
+      "description": "User with full system access.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "addedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Individual user profiles and settings."
+    },
+    "/books/{bookId}": {
+      "schema": "Book",
+      "description": "Collection of all library books."
+    },
+    "/staff/{staffId}": {
+      "schema": "Staff",
+      "description": "Directory of staff members."
+    },
+    "/activities/{activityId}": {
+      "schema": "Activity",
+      "description": "History of system activities."
+    },
+    "/admins/{uid}": {
+      "schema": "Admin",
+      "description": "Authorized administrators."
+    }
+  }
+}

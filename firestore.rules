@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 0.1 Global Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isVerified() { return isSignedIn(); } // Relaxed to isSignedIn() to allow immediate access after email registration
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isAdmin() { 
+      return isSignedIn() && (
+        request.auth.token.email == "mandaras936@gmail.com" ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+
+    // 1. Users Collection
+    match /users/{userId} {
+      function isValidUser(data) {
+        return data.keys().hasAll(['uid', 'name', 'email']) &&
+               data.keys().size() <= 6 &&
+               data.uid is string && data.uid == request.auth.uid &&
+               data.name is string && data.name.size() <= 100 &&
+               data.email is string && data.email.size() <= 100;
+      }
+
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) && isValidUser(incoming()) && incoming().createdAt == request.time;
+      allow update: if (isOwner(userId) || isAdmin()) && isValidUser(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'avatar']) ||
+        isAdmin()
+      ) && incoming().createdAt == existing().createdAt;
+    }
+
+    // 2. Books Collection
+    match /books/{bookId} {
+      function isValidBook(data) {
+        return data.keys().hasAll(['title', 'author', 'isbn', 'status']) &&
+               data.keys().size() <= 10 &&
+               data.title is string && data.title.size() <= 200 &&
+               data.author is string && data.author.size() <= 200 &&
+               data.isbn is string && data.isbn.size() <= 20 &&
+               data.status in ['Available', 'Loaned', 'Missing'] &&
+               (data.get('category', null) == null || (data.category is string && data.category.size() <= 100)) &&
+               (data.get('year', null) == null || (data.year is int && data.year <= 2100)) &&
+               (data.get('cover', null) == null || (data.cover is string && data.cover.size() <= 1000));
+      }
+
+      allow get, list: if isSignedIn();
+      allow create: if isVerified() && isValidId(bookId) && isValidBook(incoming()) && incoming().updatedAt == request.time;
+      allow update: if isVerified() && isValidBook(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']) ||
+        isAdmin()
+      ) && incoming().updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+
+    // 3. Staff Collection
+    match /staff/{staffId} {
+      function isValidStaff(data) {
+        return data.keys().hasAll(['name', 'email', 'role']) &&
+               data.keys().size() <= 8 &&
+               data.name is string && data.name.size() <= 100 &&
+               data.email is string && data.email.size() <= 100 &&
+               data.role is string && data.role.size() <= 50;
+      }
+
+      allow get, list: if isVerified();
+      allow create, update: if isAdmin() && isValidId(staffId) && isValidStaff(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // 4. Activity Collection
+    match /activities/{activityId} {
+      function isValidActivity(data) {
+        return data.keys().hasAll(['user', 'action', 'timestamp']) &&
+               data.keys().size() <= 6 &&
+               data.user is string && data.user.size() <= 100 &&
+               data.action is string && data.action.size() <= 500 &&
+               data.timestamp == request.time;
+      }
+
+      allow get, list: if isVerified();
+      allow create: if isVerified() && isValidId(activityId) && isValidActivity(incoming());
+      allow update, delete: if false; // Logs are immutable
+    }
+    
+    // 5. Admins Collection
+    match /admins/{uid} {
+      function isValidAdmin(data) {
+        return data.keys().hasAll(['email', 'addedAt']) &&
+               data.keys().size() == 2 &&
+               data.email is string &&
+               data.addedAt == request.time;
+      }
+      
+      allow get: if isSignedIn();
+      allow list: if isAdmin();
+      allow create, delete: if isAdmin() && isValidId(uid) && (uid != request.auth.uid || request.auth.token.email == "mandaras936@gmail.com");
+      allow update: if false;
+    }
+  }
+}

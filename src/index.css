@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4f46e5; /* indigo-600 */
+  --color-primary-container: #4338ca; /* indigo-700 */
+  --color-on-primary-container: #e0e7ff; /* indigo-100 */
+  --color-primary-fixed: #c7d2fe; /* indigo-200 */
+  --color-on-primary-fixed: #312e81; /* indigo-900 */
+  
+  --color-secondary: #64748b; /* slate-500 */
+  --color-secondary-container: #f1f5f9; /* slate-100 */
+  --color-on-secondary-container: #334155; /* slate-700 */
+  --color-secondary-fixed: #e2e8f0; /* slate-200 */
+  
+  --color-tertiary: #0f172a; /* slate-900 */
+  --color-tertiary-container: #1e293b; /* slate-800 */
+  --color-on-tertiary-container: #94a3b8; /* slate-400 */
+  --color-tertiary-fixed: #cbd5e1; /* slate-300 */
+  
+  --color-background-app: #f8fafc; /* slate-50 */
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f1f5f9; /* slate-100 */
+  --color-surface-container: #e2e8f0; /* slate-200 */
+  --color-surface-container-high: #cbd5e1; /* slate-300 */
+  --color-surface-container-highest: #94a3b8; /* slate-400 */
+  
+  --color-outline: #94a3b8; /* slate-400 */
+  --color-outline-variant: #e2e8f0; /* slate-200 */
+  
+  --color-on-surface: #0f172a; /* slate-900 */
+  --color-on-surface-variant: #64748b; /* slate-500 */
+  
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-ibm: "IBM Plex Sans", sans-serif;
+  
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  
+  --animate-spin-slow: spin 3s linear infinite;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+@layer base {
+  body {
+    @apply font-ibm bg-background-app text-on-surface;
+  }
+}
